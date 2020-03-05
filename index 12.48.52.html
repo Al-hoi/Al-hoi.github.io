@@ -1,0 +1,113 @@
+<html>
+<link href="knapper.css" rel="stylesheet" type="text/css">
+
+<head>
+    <title>Høidalens Hyttebok</title>
+</head>
+<h1>Høidalens Hyttebok</h1>
+    <p>Skriv inn navnet ditt, når du besøkte hytta vår, og hva du gjorde! :)</p>
+<body>
+    <form>
+        Navn:
+        <input type="text" id="txtNavn">
+        <p> Dato:
+            <input type="text" id="txtDato">
+        </p>
+
+        <textarea type="text" id="txtInfo" rows="4" cols="50" placeholder="Melding"></textarea>
+        <input type="button" value="Send inn!" id="Ok" class="Ok" onclick="leggInn();visDatabase()">
+    </form>
+    <div id="navneliste">
+    </div>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-database.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+    <script>
+        let txtNavn = document.querySelector("#txtNavn")
+        let txtDato = document.querySelector("#txtDato")
+        let txtInfo = document.querySelector("#txtInfo")
+        let navneliste = document.querySelector("#navneliste")
+
+
+        function leggInn() {
+            let navn = txtNavn.value
+            let dato = txtDato.value
+            let info = txtInfo.value
+
+
+            console.log(navn + info)
+            navneliste.innerHTML += `<div>${dato}. ${navn}: ${info}</div>`
+        }
+
+
+
+
+
+
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyDOgwZfuTi38k7WkIQgl3PYMW4ttTHpQI0",
+            authDomain: "hyttebok-7a279.firebaseapp.com",
+            databaseURL: "https://hyttebok-7a279.firebaseio.com",
+            projectId: "hyttebok-7a279",
+            storageBucket: "hyttebok-7a279.appspot.com",
+            messagingSenderId: "457721571286",
+            appId: "1:457721571286:web:efb47e052d640d1abc6677"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        let db = firebase.database();
+
+        let hyttebok = db.ref("hyttebok");
+
+
+        function leggInn() {
+            var navn_in = document.getElementById("txtNavn").value;
+            var info_in = document.getElementById("txtInfo").value;
+            let dato_in = document.getElementById("txtDato").value;
+            
+            //var today = new Date();
+            //var dateTime = today.getFullYear()+"0"+today.getMonth()+1+""+today.getDate()+""+today.getHours()+""+today.getMinutes();
+
+            let new_object = hyttebok.child(dato_in);
+
+            new_object.set({
+                navn: navn_in,
+                info: info_in,
+                dato: dato_in,
+
+            });
+            window.alert("Beskjed lagt til i databasen");
+
+        }
+        
+        function flush(){
+            document.getElementById('navn').value = "";
+            document.getElementById('info').value = "";
+               
+        }
+        
+        function visDatabase(){
+            function visDatabase_hjelpefunksjon(snapshot){
+                let timestamp = snapshot.key;
+                let navn_og_tekst = snapshot.val();
+                navneliste.innerHTML += `<div>Navn: ${navn_og_tekst.navn} Tekst: ${navn_og_tekst.info}</div>`;
+                
+            }
+            
+                hyttebok.on("child_added", visDatabase_hjelpefunksjon);
+            
+        }
+
+    </script>
+    
+
+</body>
+
+</html>
